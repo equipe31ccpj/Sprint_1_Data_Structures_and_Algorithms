@@ -1,0 +1,32 @@
+[
+    {
+        "marca": "BYD",
+        "modelo": "Dolphin",
+        "capacidade_bateria_kwh": 44.9
+    },
+    {
+        "marca": "BYD",
+        "modelo": "Seal",
+        "capacidade_bateria_kwh": 82.5
+    },
+    {
+        "marca": "GWM",
+        "modelo": "Ora 03",
+        "capacidade_bateria_kwh": 48.0
+    },
+    {
+        "marca": "Volvo",
+        "modelo": "EX30",
+        "capacidade_bateria_kwh": 69.0
+    },
+    {
+        "marca": "Tesla",
+        "modelo": "Model 3",
+        "capacidade_bateria_kwh": 75.0
+    },
+    {
+        "marca": "Renault",
+        "modelo": "Kwid E-Tech",
+        "capacidade_bateria_kwh": 26.8
+    }
+]

@@ -1,6 +1,8 @@
 import os
 import sys
 import time
+import random
+import json
 
 usuarios = []
 
@@ -98,3 +100,29 @@ while not entrar:
 
 os.system('cls' if os.name == 'nt' else 'clear')
 print('Entrada bem sucedida!')
+
+print('Conecte o carregador no dispositivo!')
+time.sleep(5)
+
+print('Estabelecendo conexão com dispositivo!')
+with open('modelos.json', 'r', encoding='utf-8') as arquivo:
+    lista_veiculos = json.load(arquivo)
+time.sleep(1)
+print('Conexão realizada')
+
+veiculo = random.choice(lista_veiculos)
+
+bateria_atual = random.randint(10, 80)
+marca = veiculo['marca']
+modelo = veiculo['modelo']
+capacidade = veiculo['capacidade_bateria_kwh']
+
+print(f"[DADOS DETECTADOS] {marca} {modelo} | Bateria Atual: {bateria_atual}%")
+
+porcentagem_faltante = 100 - bateria_atual
+energia_necessaria = (porcentagem_faltante / 100) * capacidade
+
+potencia_carregador = 22
+tempo_estimado_horas = energia_necessaria / potencia_carregador
+
+print(f'Tempo estimado em horas: {tempo_estimado_horas}')
