@@ -127,30 +127,39 @@ tempo_estimado_horas = energia_necessaria / potencia_carregador
 
 print(f'Tempo estimado em horas: {tempo_estimado_horas:.2f}')
 
-# Durante o carregamento
 
-if random.random() < 0.95:
-	tensao = random.uniform(212, 220)
-	tensao_normal = True
-else:
-	tensao = random.uniform(211, 200)
-	tensao_normal = False
+while bateria_atual < 100:
+	time.sleep(1)
+	if random.random() < 0.95:
+		tensao = random.uniform(212, 220)
+		tensao_normal = True
+	else:
+		tensao = random.uniform(211, 200)
+		tensao_normal = False
 
-if not tensao_normal:
-	corrente = random.uniform(32.6, 40.0)
-else:
-	corrente = random.uniform(31.5, 32.5)
+	if not tensao_normal:
+		corrente = random.uniform(32.6, 40.0)
+	else:
+		corrente = random.uniform(31.5, 32.5)
 
-potencia_real_w = tensao * corrente
-potencia_real_kw = potencia_real_w / 1000
+	potencia_real_w = tensao * corrente
+	potencia_real_kw = potencia_real_w / 1000
 
-if potencia_real_kw > 7.15:
-	print('Sobrecarga no sistema! Carregamento paralisado para manutenção.')
-	sys.exit()
-else:
-	pass
+	if potencia_real_kw > 7.15:
+		print('Sobrecarga no sistema! Carregamento interrompido para manutenção.')
+		time.sleep(5)
+		break
+	else:
+		pass
 
-if potencia_real_kw > 7.15:
-    temperatura = random.uniform(70.0, 95.0)
-else:
-    temperatura = random.uniform(30.0, 45.0)
+	if potencia_real_kw > 7.15:
+		temperatura = random.uniform(70.0, 95.0)
+	else:
+		temperatura = random.uniform(30.0, 45.0)
+
+	energia_ganha_kwh = potencia_real_kw / 3600
+	porcentagem_ganha = (energia_ganha_kwh / capacidade) * 100
+	bateria_atual += porcentagem_ganha
+
+	if bateria_atual > 100.0:
+		bateria_atual = 100.0
