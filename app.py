@@ -150,3 +150,7 @@ if potencia_real_kw > 7.15:
 else:
 	pass
 
+if potencia_real_kw > 7.15:
+    temperatura = random.uniform(70.0, 95.0)
+else:
+    temperatura = random.uniform(30.0, 45.0)
