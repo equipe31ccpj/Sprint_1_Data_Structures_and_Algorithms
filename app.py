@@ -105,7 +105,7 @@ print('Conecte o carregador no dispositivo!')
 time.sleep(5)
 
 print('Estabelecendo conexão com dispositivo!')
-with open('modelos.json', 'r', encoding='utf-8') as arquivo:
+with open('veiculos.json', 'r', encoding='utf-8') as arquivo:
     lista_veiculos = json.load(arquivo)
 time.sleep(1)
 print('Conexão realizada')
@@ -125,4 +125,28 @@ energia_necessaria = (porcentagem_faltante / 100) * capacidade
 potencia_carregador = 22
 tempo_estimado_horas = energia_necessaria / potencia_carregador
 
-print(f'Tempo estimado em horas: {tempo_estimado_horas}')
+print(f'Tempo estimado em horas: {tempo_estimado_horas:.2f}')
+
+# Durante o carregamento
+
+if random.random() < 0.95:
+	tensao = random.uniform(212, 220)
+	tensao_normal = True
+else:
+	tensao = random.uniform(211, 200)
+	tensao_normal = False
+
+if not tensao_normal:
+	corrente = random.uniform(32.6, 40.0)
+else:
+	corrente = random.uniform(31.5, 32.5)
+
+potencia_real_w = tensao * corrente
+potencia_real_kw = potencia_real_w / 1000
+
+if potencia_real_kw > 7.15:
+	print('Sobrecarga no sistema! Carregamento paralisado para manutenção.')
+	sys.exit()
+else:
+	pass
+
