@@ -3,6 +3,7 @@ import sys
 import time
 import random
 import json
+from datetime import datetime, time, timedelta
 
 usuarios = []
 
@@ -128,6 +129,7 @@ tempo_estimado_horas = energia_necessaria / potencia_carregador
 print(f'Tempo estimado em horas: {tempo_estimado_horas:.2f}')
 
 
+energia_realmente_injetada = 0
 while bateria_atual < 100:
 	time.sleep(1)
 	if random.random() < 0.95:
@@ -158,8 +160,78 @@ while bateria_atual < 100:
 		temperatura = random.uniform(30.0, 45.0)
 
 	energia_ganha_kwh = potencia_real_kw / 3600
+	energia_realmente_injetada += energia_ganha_kwh
 	porcentagem_ganha = (energia_ganha_kwh / capacidade) * 100
 	bateria_atual += porcentagem_ganha
 
 	if bateria_atual > 100.0:
 		bateria_atual = 100.0
+	
+
+
+
+def obter_tipo_fluxo(dia_semana, hora_atual):
+    if dia_semana < 5:
+        if (time(22, 0) <= hora_atual or hora_atual < time(7, 0)) or (time(9, 0) <= hora_atual < time(11, 0)):
+            return "BAIXA"
+        elif (time(7, 0) <= hora_atual < time(9, 0)) or (time(14, 0) <= hora_atual < time(17, 0)):
+            return "MEDIANO"
+        elif (time(12, 0) <= hora_atual < time(14, 0)) or (time(17, 0) <= hora_atual < time(21, 0)):
+            return "PICO"
+        else:
+            return "REGULAR"
+
+    else:
+        if (time(22, 0) <= hora_atual or hora_atual < time(9, 0)):
+            return "BAIXA"
+        elif (time(9, 0) <= hora_atual < time(13, 0)) or (time(20, 0) <= hora_atual < time(22, 0)):
+            return "MEDIANO"
+        elif (time(14, 0) <= hora_atual < time(20, 0)):
+            return "PICO"
+        else:
+            return "REGULAR"
+
+
+def calcular_tarifa_inteligente(data_hora, preco_base_kwh):
+    dia_semana = data_hora.weekday()
+    hora_atual = data_hora.time()
+    
+    fluxo = obter_tipo_fluxo(dia_semana, hora_atual)
+    is_janela_goodwe = time(10, 0) <= hora_atual <= time(14, 0)
+
+    if fluxo == "PICO":
+        fator = 1.25 if is_janela_goodwe else 1.40
+        
+    elif fluxo == "MEDIANO":
+        fator = 0.85 if is_janela_goodwe else 1.00
+        
+    elif fluxo == "BAIXA":
+        fator = 0.70 if is_janela_goodwe else 0.90
+        
+    else:
+        fator = 0.85 if is_janela_goodwe else 1.00
+
+    preco_final = preco_base_kwh * fator
+	
+    return {
+		"fluxo": fluxo,
+		"geracao_solar": is_janela_goodwe,
+		"fator_multiplicador": fator,
+		"preco_final_kwh": round(preco_final, 2)
+	}
+
+preco_base = 1.50  
+    
+data_ancora = datetime(2026, 5, 18, 0, 0)
+dias_aleatorios = random.randint(0, 6)      
+minutos_aleatorios = random.randint(0, 1439)
+    
+
+data_randomica = data_ancora + timedelta(days=dias_aleatorios, minutes=minutos_aleatorios)
+    
+
+valor_por_kwh = calcular_tarifa_inteligente(data_randomica, preco_base)
+preco_kwh_momento = valor_por_kwh['preco_final_kwh']
+
+custo_total = energia_realmente_injetada * preco_kwh_momento	
+
