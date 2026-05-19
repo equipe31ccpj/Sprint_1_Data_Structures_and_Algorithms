@@ -177,7 +177,7 @@ while bateria_atual < 100:
 	if bateria_atual > 100.0:
 		bateria_atual = 100.0
 	
-
+print('Carregamento concluido')
 
 
 def obter_tipo_fluxo(dia_semana, hora_atual):
