@@ -24,7 +24,11 @@ print('Iniciando Sistema HCA G2...')
 print('\n' + ('=~' * 20))
 print('1 - Já possuo uma conta.')
 print('2 - Criar conta.')
-escolha_usuario = int(input('Escolha a opção: '))
+try:
+	escolha_usuario = int(input('Escolha a opção: '))
+except ValueError:
+	print('Entrada inválida! Digite 1 ou 2.')
+	sys.exit()
 
 while escolha_usuario not in [1, 2]:
 	print('Opção inválida!')
@@ -33,7 +37,11 @@ while escolha_usuario not in [1, 2]:
 	print('=~' * 20)
 	print('1 - Já possuo uma conta.')
 	print('2 - Criar conta')
-	escolha_usuario = int(input('Escolha a opção: '))
+	try:
+		escolha_usuario = int(input('Escolha a opção: '))
+	except ValueError:
+		print('Entrada inválida! Digite 1 ou 2.')
+		sys.exit()
 
 if escolha_usuario == 2:
 	usuario = {}
@@ -50,7 +58,7 @@ if escolha_usuario == 2:
 	if criar_senha != conf_senha:
 		while criar_senha != conf_senha:
 			print('Senhas diferentes! Corrija.')
-			entrar_senha = input('Digite a senha: ')
+			criar_senha = input('Digite a senha: ')
 			conf_senha = input('Digite novamente a senha: ')
 
 	os.system('cls' if os.name == 'nt' else 'clear')
@@ -182,7 +190,7 @@ print('Carregamento concluido')
 
 def obter_tipo_fluxo(dia_semana, hora_atual):
     if dia_semana < 5:
-        if (time(22, 0) <= hora_atual or hora_atual < time(7, 0)) or (time(9, 0) <= hora_atual < time(11, 0)):
+        if (hora_atual >= time(22, 0) or hora_atual < time(7, 0)) or (time(9, 0) <= hora_atual < time(11, 0)):
             return "BAIXA"
         elif (time(7, 0) <= hora_atual < time(9, 0)) or (time(14, 0) <= hora_atual < time(17, 0)):
             return "MEDIANO"
@@ -192,7 +200,7 @@ def obter_tipo_fluxo(dia_semana, hora_atual):
             return "REGULAR"
 
     else:
-        if (time(22, 0) <= hora_atual or hora_atual < time(9, 0)):
+        if (hora_atual >= time(22, 0) or hora_atual < time(9, 0)):
             return "BAIXA"
         elif (time(9, 0) <= hora_atual < time(13, 0)) or (time(20, 0) <= hora_atual < time(22, 0)):
             return "MEDIANO"
@@ -222,23 +230,19 @@ def calcular_tarifa_inteligente(data_hora, preco_base_kwh):
         fator = 0.85 if is_janela_goodwe else 1.00
 
     preco_final = preco_base_kwh * fator
-	
+    
     return {
-		"fluxo": fluxo,
-		"geracao_solar": is_janela_goodwe,
-		"fator_multiplicador": fator,
-		"preco_final_kwh": round(preco_final, 2)
-	}
+        "fluxo": fluxo,
+        "geracao_solar": is_janela_goodwe,
+        "fator_multiplicador": fator,
+        "preco_final_kwh": round(preco_final, 2)
+    }
 
 preco_base = 1.50  
     
-data_ancora = datetime(2026, 5, 18, 0, 0)
-dias_aleatorios = random.randint(0, 6)      
 minutos_aleatorios = random.randint(0, 1439)
 
-data_randomica = data_ancora + timedelta(days=dias_aleatorios, minutes=minutos_aleatorios)
-
-hora_inicio = data_ancora + timedelta(days=dias_aleatorios, minutes=minutos_aleatorios)
+hora_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(minutes=minutos_aleatorios)
 hora_saida = hora_inicio + timedelta(seconds=segundos_decorridos)
     
 
