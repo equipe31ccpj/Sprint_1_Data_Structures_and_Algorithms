@@ -1,11 +1,21 @@
 import os
 import sys
-import time
+import time as tm
 import random
 import json
 from datetime import datetime, time, timedelta
 
-usuarios = []
+usuarios = [
+    {
+        'email': 'p@email', 
+        'senha': '123', 
+        'endereço': 'rua 123', 
+        'número de série': '456', 
+        'código de verificação': '789', 
+        'tipo de estação': 'Vaeículo'
+    }
+]
+
 
 os.system('cls' if os.name == 'nt' else 'clear')
 print('Iniciando Sistema HCA G2...')
@@ -34,7 +44,6 @@ if escolha_usuario == 2:
 	print('PERFIL DO USUÀRIO')
 	print('=~' * 20)
 	criar_email = input('Digite seu e-mail: ')
-	tipo_conta = input('Digite o tipo da sua conta: ')
 	criar_senha = input('Digite a senha: ')
 	conf_senha = input('Digite novamente a senha: ')
 
@@ -53,7 +62,6 @@ if escolha_usuario == 2:
 	tipo_estacao = input('Digite o tipo de estação: ')
 
 	usuario['email'] = criar_email
-	usuario['tipo de conta'] = tipo_conta
 	usuario['senha'] = criar_senha
 	usuario['endereço'] = endereco
 	usuario['número de série'] = num_serie
@@ -61,7 +69,7 @@ if escolha_usuario == 2:
 	usuario['tipo de estação'] = tipo_estacao
 	usuarios.append(usuario)
 	print('Conta criada com sucesso!')
-	time.sleep(5)	
+	tm.sleep(5)	
 else:
 	pass
 
@@ -88,27 +96,27 @@ while not entrar:
 	else:		
 		encerrar = False	
 		while not encerrar:
-			novamente = input('e-mail ou senha incorretas! Deseja tentar novamente: ')
+			novamente = input('e-mail ou senha incorretas! Deseja tentar novamente(sim, não): ')
 			if novamente.lower() == 'sim':
 				break
 			elif novamente.lower() == 'não':
 				print('Saindo do sistema.')
-				time.sleep(5)
+				tm.sleep(5)
 				sys.exit()
 			else:
 				print('repsosta não válida, tente novamente.')
-				time.sleep(5)
+				tm.sleep(1)
 
 os.system('cls' if os.name == 'nt' else 'clear')
 print('Entrada bem sucedida!')
 
 print('Conecte o carregador no dispositivo!')
-time.sleep(5)
+tm.sleep(5)
 
 print('Estabelecendo conexão com dispositivo!')
 with open('veiculos.json', 'r', encoding='utf-8') as arquivo:
     lista_veiculos = json.load(arquivo)
-time.sleep(1)
+tm.sleep(1)
 print('Conexão realizada')
 
 veiculo = random.choice(lista_veiculos)
@@ -130,13 +138,15 @@ print(f'Tempo estimado em horas: {tempo_estimado_horas:.2f}')
 
 
 energia_realmente_injetada = 0
+segundos_decorridos = 0
 while bateria_atual < 100:
-	time.sleep(1)
+	tm.sleep(1)
+	segundos_decorridos += 1
 	if random.random() < 0.95:
 		tensao = random.uniform(212, 220)
 		tensao_normal = True
 	else:
-		tensao = random.uniform(211, 200)
+		tensao = random.uniform(200, 211)
 		tensao_normal = False
 
 	if not tensao_normal:
@@ -147,9 +157,9 @@ while bateria_atual < 100:
 	potencia_real_w = tensao * corrente
 	potencia_real_kw = potencia_real_w / 1000
 
-	if potencia_real_kw > 7.15:
+	if potencia_real_kw > 8.8:
 		print('Sobrecarga no sistema! Carregamento interrompido para manutenção.')
-		time.sleep(5)
+		tm.sleep(5)
 		break
 	else:
 		pass
@@ -225,13 +235,25 @@ preco_base = 1.50
 data_ancora = datetime(2026, 5, 18, 0, 0)
 dias_aleatorios = random.randint(0, 6)      
 minutos_aleatorios = random.randint(0, 1439)
-    
 
 data_randomica = data_ancora + timedelta(days=dias_aleatorios, minutes=minutos_aleatorios)
+
+hora_inicio = data_ancora + timedelta(days=dias_aleatorios, minutes=minutos_aleatorios)
+hora_saida = hora_inicio + timedelta(seconds=segundos_decorridos)
     
 
-valor_por_kwh = calcular_tarifa_inteligente(data_randomica, preco_base)
+valor_por_kwh = calcular_tarifa_inteligente(hora_inicio, preco_base)
 preco_kwh_momento = valor_por_kwh['preco_final_kwh']
 
 custo_total = energia_realmente_injetada * preco_kwh_momento	
 
+print('\n\n' + '='*10 + ' RELATÓRIO FINAL ' + '='*10)
+print(f'Veículo Detectado:      {marca} {modelo}')
+print(f'Status de carregamento: {bateria_atual:.1f}%')
+print(f'Hora de entrada:         {hora_inicio.strftime("%d/%m/%Y %H:%M:%S")}')
+print(f'Hora de saída:          {hora_saida.strftime("%d/%m/%Y %H:%M:%S")}')
+print(f'Faixa de Fluxo da Rede: {valor_por_kwh["fluxo"]} (Incentivo Solar GoodWe: {"Ativo" if valor_por_kwh["geracao_solar"] else "Inativo"})')
+print(f'Energia Consumida:      {energia_realmente_injetada:.2f} kWh')
+print(f'Preço do kWh no momento: R$ {preco_kwh_momento:.2f}')
+print(f'Custo total da recarga: R$ {custo_total:.2f}')
+print('=' * 37)
